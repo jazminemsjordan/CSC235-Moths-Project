@@ -45,7 +45,7 @@ console.log(scatterData)
 // (LORELEI) COLORS FOR SCATTERPLOT POINTS SHOULD BE COLORBLIND FRIENDLY!! 
 const colorMap = {
     "SYD": "black",
-    "AMA": "blue", 
+    "AMA": "#64B5f6",
     "CAR": "orange"
 };
 
@@ -93,7 +93,7 @@ d3.select('#points')
 
 var legendsvg = d3.select("#legendviz");
 legendsvg.append("circle").attr("cx",20).attr("cy",100).attr("r", 6).style("fill", "black");
-legendsvg.append("circle").attr("cx",20).attr("cy", 130).attr("r", 6).style("fill", "blue");
+legendsvg.append("circle").attr("cx",20).attr("cy", 130).attr("r", 6).style("fill", "#64B5f6");
 legendsvg.append("circle").attr("cx",20).attr("cy", 160).attr("r", 6).style("fill", "orange");
 legendsvg.append("text").attr("x", 35).attr("y", 100).text("SYD").style("font-size", "15px").attr("alignment-baseline","middle");
 legendsvg.append("text").attr("x", 35).attr("y", 130).text("AMA").style("font-size", "15px").attr("alignment-baseline","middle");
