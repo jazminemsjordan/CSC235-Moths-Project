@@ -81,8 +81,20 @@ d3.select('#points')
         we can't use .date and .count because they don't exist in scatterdata. it's a new, basic array. it doesn't have named columns, so we need to index numerically
         the data index read from the csv creates an array of objects, which each have a key (column name) and a value (actual data). scatterData doesn't have that functionality.
         */
+        /* (LORELEI) THANK YOU!! I DO NOT HAVE A STRING GRASP ON THE FUNDAMENTALS OF HOW ALL THIS WORKS LOL */
         .attr("cx", d => x(d[0]))
         .attr("cy", d => y(d[1]))
         .attr("r", 3)
         .style("fill", d => colorMap[d[2]]); 
 
+/* (LORELEI) VERY BASIC LEGEND, I DON'T LIKE THE LOCATION BUT HAVING HARD TIME WITH MOVING IT
+  DEFINITELY MORE EFFFICIENT METHODS BUT IT DOES WORK, CONSULTED https://d3-graph-gallery.com/graph/custom_legend.html
+*/
+
+var legendsvg = d3.select("#legendviz");
+legendsvg.append("circle").attr("cx",20).attr("cy",100).attr("r", 6).style("fill", "black");
+legendsvg.append("circle").attr("cx",20).attr("cy", 130).attr("r", 6).style("fill", "blue");
+legendsvg.append("circle").attr("cx",20).attr("cy", 160).attr("r", 6).style("fill", "orange");
+legendsvg.append("text").attr("x", 35).attr("y", 100).text("SYD").style("font-size", "15px").attr("alignment-baseline","middle");
+legendsvg.append("text").attr("x", 35).attr("y", 130).text("AMA").style("font-size", "15px").attr("alignment-baseline","middle");
+legendsvg.append("text").attr("x", 35).attr("y", 160).text("CAR").style("font-size", "15px").attr("alignment-baseline","middle");
