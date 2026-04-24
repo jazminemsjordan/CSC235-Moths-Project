@@ -6,6 +6,13 @@ let margin = 50;
 let width = 500;
 let height = 500;
 
+// dropdown 
+d3.select("#xSelect").on("change", function () {
+  xVar = this.value;
+  update();
+});
+
+
 var svg = d3.select("#bar_chart")
   .append("svg")
     .attr("width", (width + margin*2))
