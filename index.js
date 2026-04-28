@@ -1,4 +1,5 @@
 const data = await d3.csv('mothitor.csv')
+const tooltip = d3.select("#tooltip");
 console.log(data)
 // bar chart
 /// dimensions
@@ -7,6 +8,7 @@ let width = 500;
 let height = 500;
 
 // dropdown 
+let xVar = "biomass";
 d3.select("#xSelect").on("change", function () {
   xVar = this.value;
   update();
@@ -42,22 +44,34 @@ var svg = d3.select("#bar_chart")
 
 
   // summarize data
-  const summary = Array.from(groupedData, ([key, values]) => {
-    const biomass = values.map(d => d.biomass);
+  function getSummary() {
+    return Array.from(groupedData, ([key, values]) => {
+      let arr;
+      if (xVar === "biomass"){
+        arr = values.map(d => d.biomass);
+      }
+      else if (xVar === "abundance"){
+        arr = values.map(d => 1);
+      }
+      else if (xVar === "speciesRichness"){
+        const speciesSet = new Set(values.map(d => d.species));
+        arr = Array(speciesSet.size).fill(1);
+      }
 
-    return {
+      return {
       deployment_name: key,
-      mean: d3.mean(biomass),
-      median: d3.median(biomass),
-      total: d3.sum(biomass,)
-    };
-  });
+      mean: d3.mean(arr),
+      median: d3.median(arr)
+      };
+    });
+  }
+
 
   // subgroups (bars per group)
-  const subgroups = ["mean", "median", "total"];
+  const subgroups = ["mean", "median"];
 
   // group names (mothitors)
-  const groups = summary.map(d => d.deployment_name);
+  const groups = Array.from(groupedData.keys());
 
   // barXscale (main groups)
   const barX= d3.scaleBand()
@@ -74,12 +88,10 @@ var svg = d3.select("#bar_chart")
 
   // Y scale
   const barY = d3.scaleLinear()
-    .domain([0, d3.max(summary, d => Math.max(d.mean, d.median))])
-    .nice()
     .range([height, 0]);
 
   svg.append("g")
-    .call(d3.axisLeft(barY));
+    .attr("class", "y-axis");
 
   // subgroup scale (within each deployment)
   const xSubgroup = d3.scaleBand()
@@ -90,24 +102,79 @@ var svg = d3.select("#bar_chart")
   // colors
   const color = d3.scaleOrdinal()
     .domain(subgroups)
-    .range(["#e41a1c", "#377eb8", "#4daf4a"]);
+    .range(["#e41a1c", "#377eb8"]);
 
-  // draw bars
-  svg.append("g")
-    .selectAll("g")
-    .data(summary)
-    .enter()
-    .append("g")
-      .attr("transform", d => "translate(" + barX(d.deployment_name) + ",0)")
-    .selectAll("rect")
-    .data(d => subgroups.map(key => ({ key: key, value: d[key] })))
-    .enter()
-    .append("rect")
+  function update() {
+    const summary = getSummary();
+
+    xSubgroup.domain(subgroups);
+
+    barY.domain([0, d3.max(summary, d => Math.max(d.mean, d.median))]).nice();
+
+    svg.select(".y-axis")
+      .transition()
+      .duration(500)
+      .call(d3.axisLeft(barY));
+
+    const groups = svg.selectAll(".group")
+      .data(summary, d => d.deployment_name);
+
+    const groupsEnter = groups.enter()
+      .append("g")
+      .attr("class", "group")
+      .attr("transform", d => `translate(${barX(d.deployment_name)}, 0)`);
+
+    const groupsMerge = groupsEnter.merge(groups)
+
+    groupsMerge
+      .transition()
+      .duration(500)
+      .attr("transform", d => `translate(${barX(d.deployment_name)}, 0)`);
+
+    const rects = groupsMerge.selectAll("rect")
+      .data(d => subgroups.map(key => ({key : key, value: d[key], deployment_name: d.deployment_name})));
+    
+    const rectsEnter = rects.enter()
+      .append("rect")
       .attr("x", d => xSubgroup(d.key))
-      .attr("y", d => barY(d.value))
       .attr("width", xSubgroup.bandwidth())
-      .attr("height", d => height - barY(d.value))
-      .attr("fill", d => color(d.key));
+      .attr("fill", d => color(d.key))
+      .attr("y", height)
+      .attr("height", 0)
+
+      .on("mouseover", function(event, d) {
+        const station = d3.select(this.parentNode).datum().deployment_name;
+
+        d3.select(this)
+          .attr("stroke", "black")
+          .attr("stroke-width", 2);
+
+        tooltip
+          .style("opacity", 1)
+          .html(`<strong>Station:</strong> ${station}<br>
+            <strong>Metric:</strong> ${d.key}<br>
+            <strong>Value:</strong> ${Math.round(d.value)}`);
+      })
+      .on("mousemove", function(event) {
+        tooltip
+          .style("left", (event.pageX + 10) + "px")
+          .style("top", (event.pageY - 20) + "px");
+      })
+      .on("mouseout", function() {
+        d3.select(this).attr("stroke", "none");
+        tooltip.style("opacity", 0);
+      });
+
+    rectsEnter.merge(rects)
+      .transition()
+      .duration(500)
+      .attr("x", d => xSubgroup(d.key))
+      .attr("width", xSubgroup.bandwidth())
+      .attr("y", d => barY(d.value))
+      .attr("height", d => height - barY(d.value));
+  }
+
+  update();
 
   // legend
   const legend = svg.append("g")
