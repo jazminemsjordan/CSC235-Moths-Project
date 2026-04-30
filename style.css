@@ -1,1 +1,36 @@
+#scatterplot_container {
+    background-color: lightgrey;
+    display: inline-block;
+    border: 2px solid black;
+    margin: 10px;
+}
 
+#bar_chart {
+    background-color: lightgrey;
+    display: inline-block;
+    border: 2px solid black;
+    margin: 10px;
+}
+
+#legend {
+    display: inline-block;
+    background-color: white;
+    border: 2px solid black;
+}
+
+#piechart_container {
+    background-color: lightgrey;
+    display: inline-block;
+    border: 2px solid black;
+    margin: 10px;
+}
+
+#vis2 {
+    display: flex;
+    align-items: flex-start;
+}
+
+#pie_title {
+    font-size: large;
+    text-align: center;
+}
