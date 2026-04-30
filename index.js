@@ -14,6 +14,17 @@ d3.select("#xSelect").on("change", function () {
   update();
 });
 
+const stationMap = {
+    "SYD": "large",
+    "AMA": "medium",
+    "CAR": "small"
+};
+
+const unitMap = {
+  "biomass": "sq. cm",
+  "abundance": "moths",
+  "speciesRichness": "species"
+};
 
 var svg = d3.select("#bar_chart")
   .append("svg")
@@ -31,7 +42,7 @@ var svg = d3.select("#bar_chart")
 
     let [x1, y1, x2, y2] = d.bbox_parsed;
 
-    d.biomass = (x2 - x1) * (y2 - y1);
+    d.biomass = ((x2 - x1) * 0.006904) * ((y2 - y1) * 0.005947);
   });
 
   // calculate species richness per mothitor 
@@ -65,6 +76,8 @@ var svg = d3.select("#bar_chart")
       };
     });
   }
+
+
 
 
   // subgroups (bars per group)
@@ -151,9 +164,9 @@ var svg = d3.select("#bar_chart")
 
         tooltip
           .style("opacity", 1)
-          .html(`<strong>Station:</strong> ${station}<br>
+          .html(`<strong>Station:</strong> ${stationMap[station]}<br>
             <strong>Metric:</strong> ${d.key}<br>
-            <strong>Value:</strong> ${Math.round(d.value)}`);
+            <strong>Value:</strong> ${Math.round(d.value) + " " + unitMap[xVar]}`);
       })
       .on("mousemove", function(event) {
         tooltip
@@ -177,12 +190,21 @@ var svg = d3.select("#bar_chart")
   update();
 
   // legend
-  const legend = svg.append("g")
-    .attr("transform", "translate(" + (width - 100) + ",20)");
+  const legend = svg.append("g");
+  
+  legend.append("rect")
+    .attr("x", width - 100)
+    .attr("y", 0)
+    .attr("width", 80)
+    .attr("height", 50)
+    .attr("fill", "white")
+    .attr("stroke", "black")
+    .attr("stroke-width", 2);
+    
 
   subgroups.forEach((key, i) => {
     const row = legend.append("g")
-      .attr("transform", "translate(0," + i * 20 + ")");
+      .attr("transform", "translate(" + (width - 90) + "," + (10 + i * 20) + ")");
 
     row.append("rect")
       .attr("width", 12)
@@ -264,6 +286,16 @@ d3.select('#yaxis')
     .attr("transform", "translate(40, 0)")
 
 
+// preparing pie chart
+const arc = d3.arc()
+    .innerRadius(0)
+    .outerRadius(120);
+
+const pie = d3.pie()
+    .value(d => d[1]);
+
+const pieColor = d3.scaleOrdinal(d3.schemeTableau10);
+
 // plot scatterplot points
 d3.select('#points')
     .selectAll("dot")
@@ -279,17 +311,95 @@ d3.select('#points')
         /* (LORELEI) THANK YOU!! I DO NOT HAVE A STRING GRASP ON THE FUNDAMENTALS OF HOW ALL THIS WORKS LOL */
         .attr("cx", d => x(d[0]))
         .attr("cy", d => y(d[1]))
-        .attr("r", 3)
-        .style("fill", d => colorMap[d[2]]); 
+        .attr("r", 4)
+        .style("fill", d => colorMap[d[2]])
+        // click event for scatterplot
+
+d3.select('#points')
+  .selectAll("circle")
+  .on("click", function(event, d) {
+          const selectedDate = d[0].toISOString();
+          const selectedStation = d[2];
+          // clear dot highlights
+          d3.select('#points')
+              .selectAll("circle")
+              .attr("r", 3)
+              .attr("stroke", "none");
+
+          // highlight this dot
+          d3.select(this)
+              .attr("r", 8)
+              .attr("stroke", "red")
+              .attr("stroke-width", 1.5);
+
+          // filters data to matching station + date
+          const dailyData = data.filter(e =>
+              e.deployment_name === selectedStation && e.date.toISOString() === selectedDate
+          );
+
+          // counts occurences of each species
+          const speciesCounts = d3.rollup(dailyData, D => D.length, e => e.species);
+          const pieData = Array.from(speciesCounts, ([species, count]) => [species || "Unknown", count]);
+
+          // updates title
+          d3.select("#pie_title")
+            .text(`${stationMap[selectedStation]} landing: ${d[0].toLocaleDateString()}`);
+
+          // build pie chart
+          const arcs = 
+          d3.select("#arcs")
+            .selectAll("path")
+            .data(pie(pieData));
+
+          arcs.enter()
+              .append("path")
+              .merge(arcs)
+              .transition().duration(400)
+              .attr("d", arc)
+              .attr("fill", (d, i) => pieColor(i))
+              .attr("stroke", "black")
+              .attr("stroke-width", 1.5);
+
+          arcs.exit().remove();
+
+          // pie tooltip
+          d3.select("#arcs")
+              .selectAll("path")
+              .on("mouseover", function(event, d) {
+                  d3.select(this)
+                    .attr("stroke", "yellow")
+                    .attr("stroke-width", 3);
+                  tooltip
+                      .style("opacity", 1)
+                      .html(`<strong>Species:</strong> ${d.data[0]}<br><strong>Count:</strong> ${d.data[1]}`);
+              })
+              .on("mousemove", function(event) {
+                  tooltip
+                      .style("left", (event.pageX + 10) + "px")
+                      .style("top", (event.pageY - 20) + "px");
+              })
+              .on("mouseout", function() {
+                  d3.select(this)
+                    .attr("stroke", "black")
+                    .attr("stroke-width", 1.5);
+                  tooltip
+                    .style("opacity", 0);
+              });
+      });
 
 /* (LORELEI) VERY BASIC LEGEND, I DON'T LIKE THE LOCATION BUT HAVING HARD TIME WITH MOVING IT
   DEFINITELY MORE EFFFICIENT METHODS BUT IT DOES WORK, CONSULTED https://d3-graph-gallery.com/graph/custom_legend.html
 */
 
 var legendsvg = d3.select("#legendviz");
-legendsvg.append("circle").attr("cx",20).attr("cy",100).attr("r", 6).style("fill", "black");
-legendsvg.append("circle").attr("cx",20).attr("cy", 130).attr("r", 6).style("fill", "#64B5f6");
-legendsvg.append("circle").attr("cx",20).attr("cy", 160).attr("r", 6).style("fill", "orange");
-legendsvg.append("text").attr("x", 35).attr("y", 100).text("SYD").style("font-size", "15px").attr("alignment-baseline","middle");
-legendsvg.append("text").attr("x", 35).attr("y", 130).text("AMA").style("font-size", "15px").attr("alignment-baseline","middle");
-legendsvg.append("text").attr("x", 35).attr("y", 160).text("CAR").style("font-size", "15px").attr("alignment-baseline","middle");
+legendsvg.append("rect").attr("x", 0).attr("y", 10).attr("width", 150).attr("height", 100).attr("fill", "white").attr("stroke", "black").attr("stroke-width", 2);
+legendsvg.append("circle").attr("cx",20).attr("cy",30).attr("r", 6).style("fill", "orange");
+legendsvg.append("circle").attr("cx",20).attr("cy", 60).attr("r", 6).style("fill", "#64B5f6");
+legendsvg.append("circle").attr("cx",20).attr("cy", 90).attr("r", 6).style("fill", "black");
+legendsvg.append("text").attr("x", 35).attr("y", 30).text("Small Landing").style("font-size", "15px").attr("alignment-baseline","middle");
+legendsvg.append("text").attr("x", 35).attr("y", 60).text("Medium Landing").style("font-size", "15px").attr("alignment-baseline","middle");
+legendsvg.append("text").attr("x", 35).attr("y", 90).text("Large Landing").style("font-size", "15px").attr("alignment-baseline","middle");
+
+
+
+
