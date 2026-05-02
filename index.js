@@ -1,7 +1,7 @@
 const data = await d3.csv('mothitor.csv')
 const tooltip = d3.select("#tooltip");
 console.log(data)
-// bar chart
+
 /// dimensions
 let margin = 50;
 let width = 500;
@@ -74,7 +74,6 @@ var svg = d3.select("#bar_chart")
 
 
   // calculate biomass per row usng bbox which is an approximation
-  //still need to remove outliers if time ex. {[62.0, 5374.0, 1615.0, 6944.0]} which is unrealistic.
   data.forEach(d => {
     d.bbox_parsed = JSON.parse(d.bbox);
 
@@ -83,9 +82,6 @@ var svg = d3.select("#bar_chart")
     d.biomass = ((x2 - x1) * 0.006904) * ((y2 - y1) * 0.005947);
   });
 
-  // calculate species richness per mothitor 
-  const speciesRichness = d3.group(data, (d) => d.species, (d) => d.deployment_name)
-
   // group by deployment_name (mothitor)
   //idk if I should change the names/ add a better label
   const groupedData = d3.group(
@@ -93,6 +89,10 @@ var svg = d3.select("#bar_chart")
     d => d.deployment_name,
     d => d.date
    );
+
+
+// calculate species richness per mothitor per day to be able to calculate the mean and median.
+const speciesRichness = d3.group(data, (d) => d.species, (d) => d.deployment_name)
 
 function getDailyRichness() {
   const result = [];
@@ -114,6 +114,7 @@ function getDailyRichness() {
   return result;
 }
 
+//calculates the mean and median for each value
 function getSummary() {
   const result = [];
 
