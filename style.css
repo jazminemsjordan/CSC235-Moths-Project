@@ -1,14 +1,29 @@
+h1 {
+    font-family: "Arial", Helvetica, sans-serif;
+    text-align-last: center;
+}
+
+h2 {
+    font-family: "Arial", Helvetica, sans-serif;
+}
+
 #scatterplot_container {
-    background-color: lightgrey;
+    background-color: #F7F7F7;
     display: inline-block;
     border: 2px solid black;
     margin: 10px;
 }
 
 #bar_chart {
-    background-color: lightgrey;
+    background-color: #F7F7F7;
     display: inline-block;
     border: 2px solid black;
+    margin: 10px;
+}
+
+#bar_label {
+    font-size: 15px;
+    font-family: Arial, Helvetica, sans-serif;
     margin: 10px;
 }
 
@@ -18,13 +33,21 @@
     border: 2px solid black;
 }
 
+#legendviz {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 15px;
+}
+
 #piechart_container {
-    background-color: lightgrey;
-    display: inline-block;
+    background-color: #F7F7F7;
+    display: none;
     border: 2px solid black;
     margin: 10px;
 }
 
+#pie_title {
+    font-family: Arial, Helvetica, sans-serif
+}
 #vis2 {
     display: flex;
     align-items: flex-start;
