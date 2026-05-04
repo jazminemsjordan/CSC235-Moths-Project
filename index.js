@@ -285,7 +285,8 @@ groupsMerge
       .attr("x", 18)
       .attr("y", 10)
       .text(key)
-      .style("font-size", "15px");
+      .style("font-size", "15px")
+      .style("font-family", "sans-serif");
   });
 
 
@@ -293,7 +294,7 @@ groupsMerge
 const scatterData = syd.concat(ama, car)
 console.log(scatterData)
 
-// (LORELEI) COLORS FOR SCATTERPLOT POINTS SHOULD BE COLORBLIND FRIENDLY!! 
+// Scatterplot points colors
 const colorMap = {
     "SYD": "black",
     "AMA": "#64B5f6",
@@ -370,6 +371,7 @@ d3.select('#points')
   .on("click", function(event, d) {
           const selectedDate = d[0].toISOString();
           const selectedStation = d[2];
+
           // clear dot highlights
           d3.select('#points')
               .selectAll("circle")
@@ -394,6 +396,10 @@ d3.select('#points')
           // updates title
           d3.select("#pie_title")
             .text(`${stationMap[selectedStation]} landing: ${d[0].toLocaleDateString()}`);
+
+          // Hide pie chart before click
+          d3.select("#piechart_container")
+              .style("display", "block");
 
           // build pie chart
           const arcs = 
@@ -446,11 +452,12 @@ legendsvg.append("rect").attr("x", 0).attr("y", 10).attr("width", 150).attr("hei
 legendsvg.append("circle").attr("cx",20).attr("cy",30).attr("r", 6).style("fill", "orange");
 legendsvg.append("circle").attr("cx",20).attr("cy", 60).attr("r", 6).style("fill", "#64B5f6");
 legendsvg.append("circle").attr("cx",20).attr("cy", 90).attr("r", 6).style("fill", "black");
-legendsvg.append("text").attr("x", 35).attr("y", 30).text("Small Landing").style("font-size", "15px").style("font-family", "Arial").attr("alignment-baseline","middle");
-legendsvg.append("text").attr("x", 35).attr("y", 60).text("Medium Landing").style("font-size", "15px").style("font-family", "Arial").attr("alignment-baseline","middle");
-legendsvg.append("text").attr("x", 35).attr("y", 90).text("Large Landing").style("font-size", "15px").style("font-family", "Arial").attr("alignment-baseline","middle");
+legendsvg.append("text").attr("x", 35).attr("y", 30).text("Small Landing").attr("alignment-baseline","middle");
+legendsvg.append("text").attr("x", 35).attr("y", 60).text("Medium Landing").attr("alignment-baseline","middle");
+legendsvg.append("text").attr("x", 35).attr("y", 90).text("Large Landing").attr("alignment-baseline","middle");
 
-
+//.style("font-family", "sans-serif")
+//.style("font-size", "15px")
 
 
 
