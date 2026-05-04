@@ -1,6 +1,6 @@
-const data = await d3.csv('mothitor.csv')
+const data = await d3.csv('mothitor.csv');
 const tooltip = d3.select("#tooltip");
-console.log(data)
+console.log(data);
 
 /// dimensions
 let margin = 50;
@@ -11,12 +11,12 @@ let height = 500;
 const parseTime = d3.timeParse("%b %-d %Y");
 
 for (let i = 0; i < data.length; i++) {
-    data[i]['date'] = parseTime(data[i]['date'])
-};
+    data[i]['date'] = parseTime(data[i]['date']);
+}
 
 // converting to string to delete duplicates
-let dateStrings = data.map(d => d.date.toISOString())
-dateStrings = Array.from(new Set((dateStrings)))
+let dateStrings = data.map(d => d.date.toISOString());
+dateStrings = Array.from(new Set((dateStrings)));
 
 //grouping
 const grouped = d3.group(data, 
@@ -291,8 +291,8 @@ groupsMerge
 
 
 // Builds the scatterplot data array by stacking the three station arrays
-const scatterData = syd.concat(ama, car)
-console.log(scatterData)
+const scatterData = syd.concat(ama, car);
+console.log(scatterData);
 
 // Scatterplot points colors
 const colorMap = {
@@ -305,7 +305,7 @@ const colorMap = {
 const x = d3.scaleTime()
     .domain(d3.extent(dates))
     .range([80, 940]);
-const xaxis = d3.axisBottom(x)
+const xaxis = d3.axisBottom(x);
 d3.select('#xaxis')
     .call(xaxis)
     .attr("transform", "translate(0, 600)")
@@ -346,6 +346,7 @@ const pie = d3.pie()
     .value(d => d[1]);
 
 const pieColor = d3.scaleOrdinal(d3.schemePaired);
+// original color scheme was d3.schemeTableau10, not sure if this one looks better or not but it technically has more colors
 
 // plot scatterplot points
 d3.select('#points')
@@ -353,17 +354,10 @@ d3.select('#points')
     .data(scatterData)
     .enter()
     .append("circle")
-        /* (LORELEI) WHY CANT IT JUST BE ".attr("cx", d => x(d.date))" AND ".attr( "cy", d => y(d.count))"
-         FOR THE BELOW CODE? */
-        /* answer: we can do the pointers like that! I switched it. The function line was a bit unwieldy, you're right.
-        we can't use .date and .count because they don't exist in scatterdata. it's a new, basic array. it doesn't have named columns, so we need to index numerically
-        the data index read from the csv creates an array of objects, which each have a key (column name) and a value (actual data). scatterData doesn't have that functionality.
-        */
-        /* (LORELEI) THANK YOU!! I DO NOT HAVE A STRING GRASP ON THE FUNDAMENTALS OF HOW ALL THIS WORKS LOL */
         .attr("cx", d => x(d[0]))
         .attr("cy", d => y(d[1]))
         .attr("r", 5)
-        .style("fill", d => colorMap[d[2]])
+        .style("fill", d => colorMap[d[2]]);
         // click event for scatterplot
 
 d3.select('#points')
@@ -443,10 +437,7 @@ d3.select('#points')
               });
       });
 
-/* (LORELEI) VERY BASIC LEGEND, I DON'T LIKE THE LOCATION BUT HAVING HARD TIME WITH MOVING IT
-  DEFINITELY MORE EFFFICIENT METHODS BUT IT DOES WORK, CONSULTED https://d3-graph-gallery.com/graph/custom_legend.html
-*/
-
+// consulted https://d3-graph-gallery.com/graph/custom_legend.html to make a legend for scatterplot
 var legendsvg = d3.select("#legendviz");
 legendsvg.append("rect").attr("x", 0).attr("y", 10).attr("width", 150).attr("height", 100).attr("fill", "white").attr("stroke", "black").attr("stroke-width", 2);
 legendsvg.append("circle").attr("cx",20).attr("cy",30).attr("r", 6).style("fill", "orange");
@@ -456,8 +447,6 @@ legendsvg.append("text").attr("x", 35).attr("y", 30).text("Small Landing").attr(
 legendsvg.append("text").attr("x", 35).attr("y", 60).text("Medium Landing").attr("alignment-baseline","middle");
 legendsvg.append("text").attr("x", 35).attr("y", 90).text("Large Landing").attr("alignment-baseline","middle");
 
-//.style("font-family", "sans-serif")
-//.style("font-size", "15px")
 
 
 

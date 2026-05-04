@@ -23,5 +23,5 @@ The user must open their terminal and can put in the following command: "npm ins
 package that will allow the user to open a static HTTP server. Next, the user should put the following into the terminal
 to open website: "npx http-server /path -o -p 8080". This should open up a local server with the website!
 
-However, for the most convenient way to view our website
-## Guide to Mothitor.csv
+## Guide to mothitor.csv
+The mothitor.csv file is the data wrangled version
