@@ -1,11 +1,49 @@
 const data = await d3.csv('mothitor.csv')
 const tooltip = d3.select("#tooltip");
 console.log(data)
-// bar chart
+
 /// dimensions
 let margin = 50;
 let width = 500;
 let height = 500;
+
+// changing date format from month abbreviation to numerical
+const parseTime = d3.timeParse("%b %-d %Y");
+
+for (let i = 0; i < data.length; i++) {
+    data[i]['date'] = parseTime(data[i]['date'])
+};
+
+// converting to string to delete duplicates
+let dateStrings = data.map(d => d.date.toISOString())
+dateStrings = Array.from(new Set((dateStrings)))
+
+//grouping
+const grouped = d3.group(data, 
+    d => d.deployment_name, 
+    d => d.date.toISOString()
+);
+
+/* get counts for each station 
+How this works: if statement checks to make sure that all three groups have data for a given date, to keep our comparisons fair
+One array is created for each station. The date is converted from a string to a date object and added to the first column of all three arrays.
+(dates are also added to their own array for the domain of our x axis later)
+The count is recorded for each group and each date in their respective arrays
+The name of each station is recorded in every object of the array
+*/
+let syd = []
+let ama = []
+let car = []
+let dates = []
+for (let i = 0; i < dateStrings.length; i++) {
+    if (grouped.get("SYD").get(dateStrings[i]) != undefined && grouped.get("AMA").get(dateStrings[i]) != undefined && grouped.get("CAR").get(dateStrings[i]) != undefined){
+        let date = new Date(dateStrings[i])
+        dates.push(date)
+        syd.push([date, grouped.get("SYD").get(dateStrings[i]).length, "SYD"])
+        ama.push([date, grouped.get("AMA").get(dateStrings[i]).length, "AMA"])
+        car.push([date, grouped.get("CAR").get(dateStrings[i]).length, "CAR"])
+    }
+};
 
 // dropdown 
 let xVar = "biomass";
@@ -36,7 +74,6 @@ var svg = d3.select("#bar_chart")
 
 
   // calculate biomass per row usng bbox which is an approximation
-  //still need to remove outliers if time ex. {[62.0, 5374.0, 1615.0, 6944.0]} which is unrealistic.
   data.forEach(d => {
     d.bbox_parsed = JSON.parse(d.bbox);
 
@@ -45,40 +82,71 @@ var svg = d3.select("#bar_chart")
     d.biomass = ((x2 - x1) * 0.006904) * ((y2 - y1) * 0.005947);
   });
 
-  // calculate species richness per mothitor 
-  const speciesRichness = d3.group(data, (d) => d.species, (d) => d.deployment_name)
-
   // group by deployment_name (mothitor)
   //idk if I should change the names/ add a better label
-  const groupedData = d3.group(data, d => d.deployment_name);
+  const groupedData = d3.group(
+    data,
+    d => d.deployment_name,
+    d => d.date
+   );
 
 
+// calculate species richness per mothitor per day to be able to calculate the mean and median.
+const speciesRichness = d3.group(data, (d) => d.species, (d) => d.deployment_name)
 
-  // summarize data
-  function getSummary() {
-    return Array.from(groupedData, ([key, values]) => {
-      let arr;
-      if (xVar === "biomass"){
-        arr = values.map(d => d.biomass);
-      }
-      else if (xVar === "abundance"){
-        arr = values.map(d => 1);
-      }
-      else if (xVar === "speciesRichness"){
-        const speciesSet = new Set(values.map(d => d.species));
-        arr = Array(speciesSet.size).fill(1);
-      }
+function getDailyRichness() {
+  const result = [];
 
-      return {
-      deployment_name: key,
-      mean: d3.mean(arr),
-      median: d3.median(arr)
-      };
+  groupedData.forEach((dateMap, station) => {
+    const dailyValues = [];
+
+    dateMap.forEach((records, date) => {
+      const speciesSet = new Set(records.map(d => d.species));
+      dailyValues.push(speciesSet.size);
     });
-  }
 
+    result.push({
+      deployment_name: station,
+      values: dailyValues
+    });
+  });
 
+  return result;
+}
 
+//calculates the mean and median for each value
+function getSummary() {
+  const result = [];
+
+  groupedData.forEach((dateMap, station) => {
+    let values = [];
+
+    if (xVar === "speciesRichness") {
+      dateMap.forEach((records, date) => {
+        const speciesSet = new Set(records.map(d => d.species));
+        values.push(speciesSet.size);
+      });
+
+    } else if (xVar === "abundance") {
+      dateMap.forEach((records, date) => {
+        values.push(records.length);
+      });
+
+    } else if (xVar === "biomass") {
+      dateMap.forEach((records, date) => {
+        records.forEach(d => values.push(d.biomass));
+      });
+    }
+
+    result.push({
+      deployment_name: station,
+      mean: d3.mean(values),
+      median: d3.median(values)
+    });
+  });
+
+  return result;
+}
 
   // subgroups (bars per group)
   const subgroups = ["mean", "median"];
@@ -122,7 +190,8 @@ var svg = d3.select("#bar_chart")
 
     xSubgroup.domain(subgroups);
 
-    barY.domain([0, d3.max(summary, d => Math.max(d.mean, d.median))]).nice();
+    barY.domain([0, d3.max(summary, d => Math.max(d.mean || 0, d.median|| 0))]).nice();
+    barX.domain(summary.map(d => d.deployment_name));
 
     svg.select(".y-axis")
       .transition()
@@ -130,20 +199,21 @@ var svg = d3.select("#bar_chart")
       .call(d3.axisLeft(barY));
 
     const groups = svg.selectAll(".group")
-      .data(summary, d => d.deployment_name);
+  .data(summary, d => d.deployment_name);
 
-    const groupsEnter = groups.enter()
-      .append("g")
-      .attr("class", "group")
-      .attr("transform", d => `translate(${barX(d.deployment_name)}, 0)`);
+groups.exit().remove();
 
-    const groupsMerge = groupsEnter.merge(groups)
+const groupsEnter = groups.enter()
+  .append("g")
+  .attr("class", "group");
 
-    groupsMerge
-      .transition()
-      .duration(500)
-      .attr("transform", d => `translate(${barX(d.deployment_name)}, 0)`);
+const groupsMerge = groupsEnter.merge(groups);
 
+groupsMerge
+  .transition()
+  .duration(500)
+  .attr("transform", d => `translate(${barX(d.deployment_name)}, 0)`);
+  
     const rects = groupsMerge.selectAll("rect")
       .data(d => subgroups.map(key => ({key : key, value: d[key], deployment_name: d.deployment_name})));
     
@@ -217,43 +287,7 @@ var svg = d3.select("#bar_chart")
       .text(key)
       .style("font-size", "12px");
   });
-// changing date format from month abbreviation to numerical
-const parseTime = d3.timeParse("%b %-d %Y");
 
-for (let i = 0; i < data.length; i++) {
-    data[i]['date'] = parseTime(data[i]['date'])
-};
-
-// converting to string to delete duplicates
-let dateStrings = data.map(d => d.date.toISOString())
-dateStrings = Array.from(new Set((dateStrings)))
-
-//grouping
-const grouped = d3.group(data, 
-    d => d.deployment_name, 
-    d => d.date.toISOString()
-);
-
-/* get counts for each station 
-How this works: if statement checks to make sure that all three groups have data for a given date, to keep our comparisons fair
-One array is created for each station. The date is converted from a string to a date object and added to the first column of all three arrays.
-(dates are also added to their own array for the domain of our x axis later)
-The count is recorded for each group and each date in their respective arrays
-The name of each station is recorded in every object of the array
-*/
-let syd = []
-let ama = []
-let car = []
-let dates = []
-for (let i = 0; i < dateStrings.length; i++) {
-    if (grouped.get("SYD").get(dateStrings[i]) != undefined && grouped.get("AMA").get(dateStrings[i]) != undefined && grouped.get("CAR").get(dateStrings[i]) != undefined){
-        let date = new Date(dateStrings[i])
-        dates.push(date)
-        syd.push([date, grouped.get("SYD").get(dateStrings[i]).length, "SYD"])
-        ama.push([date, grouped.get("AMA").get(dateStrings[i]).length, "AMA"])
-        car.push([date, grouped.get("CAR").get(dateStrings[i]).length, "CAR"])
-    }
-};
 
 // Builds the scatterplot data array by stacking the three station arrays
 const scatterData = syd.concat(ama, car)
@@ -399,6 +433,8 @@ legendsvg.append("circle").attr("cx",20).attr("cy", 90).attr("r", 6).style("fill
 legendsvg.append("text").attr("x", 35).attr("y", 30).text("Small Landing").style("font-size", "15px").attr("alignment-baseline","middle");
 legendsvg.append("text").attr("x", 35).attr("y", 60).text("Medium Landing").style("font-size", "15px").attr("alignment-baseline","middle");
 legendsvg.append("text").attr("x", 35).attr("y", 90).text("Large Landing").style("font-size", "15px").attr("alignment-baseline","middle");
+
+
 
 
 
