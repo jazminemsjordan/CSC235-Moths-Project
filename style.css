@@ -1,12 +1,12 @@
 #scatterplot_container {
-    background-color: lightgrey;
+    background-color: #F7F7F7;
     display: inline-block;
     border: 2px solid black;
     margin: 10px;
 }
 
 #bar_chart {
-    background-color: lightgrey;
+    background-color: #F7F7F7;
     display: inline-block;
     border: 2px solid black;
     margin: 10px;
@@ -19,7 +19,7 @@
 }
 
 #piechart_container {
-    background-color: lightgrey;
+    background-color: #F7F7F7;
     display: inline-block;
     border: 2px solid black;
     margin: 10px;

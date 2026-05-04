@@ -263,8 +263,8 @@ groupsMerge
   const legend = svg.append("g");
   
   legend.append("rect")
-    .attr("x", width - 100)
-    .attr("y", 0)
+    .attr("x", width - 40)
+    .attr("y", -40)
     .attr("width", 80)
     .attr("height", 50)
     .attr("fill", "white")
@@ -274,7 +274,7 @@ groupsMerge
 
   subgroups.forEach((key, i) => {
     const row = legend.append("g")
-      .attr("transform", "translate(" + (width - 90) + "," + (10 + i * 20) + ")");
+      .attr("transform", "translate(" + (width - 30) + "," + (-30 + i * 20) + ")");
 
     row.append("rect")
       .attr("width", 12)
@@ -285,7 +285,7 @@ groupsMerge
       .attr("x", 18)
       .attr("y", 10)
       .text(key)
-      .style("font-size", "12px");
+      .style("font-size", "15px");
   });
 
 
@@ -303,11 +303,19 @@ const colorMap = {
 // x axis
 const x = d3.scaleTime()
     .domain(d3.extent(dates))
-    .range([40, 940]);
+    .range([80, 940]);
 const xaxis = d3.axisBottom(x)
 d3.select('#xaxis')
     .call(xaxis)
     .attr("transform", "translate(0, 600)")
+    .append("text")
+    //(940-80)/2 + 4
+    .attr("x", (940-80)/2 + 90)
+    .attr("y", 45)
+    .attr("fill", "black")
+    .attr("text-anchor", "middle")
+    .style("font-size", "15px")
+    .text("Date");
 
 
 // y axis
@@ -317,7 +325,15 @@ const y = d3.scaleLinear()
 const yaxis = d3.axisLeft(y);
 d3.select('#yaxis')
     .call(yaxis)
-    .attr("transform", "translate(40, 0)")
+    .attr("transform", "translate(80, 0)")
+    .append("text")
+    .attr("transform", "rotate(-90)")
+    .attr("x", -300)
+    .attr("y", -50)
+    .attr("fill", "black")
+    .attr("text-anchor", "middle")
+    .style("font-size", "15px")
+    .text("Number of Moths Observed");
 
 
 // preparing pie chart
@@ -328,7 +344,7 @@ const arc = d3.arc()
 const pie = d3.pie()
     .value(d => d[1]);
 
-const pieColor = d3.scaleOrdinal(d3.schemeTableau10);
+const pieColor = d3.scaleOrdinal(d3.schemePaired);
 
 // plot scatterplot points
 d3.select('#points')
@@ -345,7 +361,7 @@ d3.select('#points')
         /* (LORELEI) THANK YOU!! I DO NOT HAVE A STRING GRASP ON THE FUNDAMENTALS OF HOW ALL THIS WORKS LOL */
         .attr("cx", d => x(d[0]))
         .attr("cy", d => y(d[1]))
-        .attr("r", 4)
+        .attr("r", 5)
         .style("fill", d => colorMap[d[2]])
         // click event for scatterplot
 
@@ -357,12 +373,12 @@ d3.select('#points')
           // clear dot highlights
           d3.select('#points')
               .selectAll("circle")
-              .attr("r", 3)
+              .attr("r", 5)
               .attr("stroke", "none");
 
           // highlight this dot
           d3.select(this)
-              .attr("r", 8)
+              .attr("r", 10)
               .attr("stroke", "red")
               .attr("stroke-width", 1.5);
 
@@ -430,9 +446,9 @@ legendsvg.append("rect").attr("x", 0).attr("y", 10).attr("width", 150).attr("hei
 legendsvg.append("circle").attr("cx",20).attr("cy",30).attr("r", 6).style("fill", "orange");
 legendsvg.append("circle").attr("cx",20).attr("cy", 60).attr("r", 6).style("fill", "#64B5f6");
 legendsvg.append("circle").attr("cx",20).attr("cy", 90).attr("r", 6).style("fill", "black");
-legendsvg.append("text").attr("x", 35).attr("y", 30).text("Small Landing").style("font-size", "15px").attr("alignment-baseline","middle");
-legendsvg.append("text").attr("x", 35).attr("y", 60).text("Medium Landing").style("font-size", "15px").attr("alignment-baseline","middle");
-legendsvg.append("text").attr("x", 35).attr("y", 90).text("Large Landing").style("font-size", "15px").attr("alignment-baseline","middle");
+legendsvg.append("text").attr("x", 35).attr("y", 30).text("Small Landing").style("font-size", "15px").style("font-family", "Arial").attr("alignment-baseline","middle");
+legendsvg.append("text").attr("x", 35).attr("y", 60).text("Medium Landing").style("font-size", "15px").style("font-family", "Arial").attr("alignment-baseline","middle");
+legendsvg.append("text").attr("x", 35).attr("y", 90).text("Large Landing").style("font-size", "15px").style("font-family", "Arial").attr("alignment-baseline","middle");
 
 
 
