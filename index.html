@@ -9,11 +9,15 @@
 
 
 </head>
-    <h1>CSC235 Moths Project</h1>
-    <h2>Introduction of Project</h2>
-    <h2>Our Goal</h2>
-    <h2>Our Data</h2>
+
 <body>
+    <h1>CSC235 Moths Project</h1>
+    <p id="authors">Jazmine Jordan, Krystal Bautista, Scarlett Lopez, Emma McRedmond, and Lorelei Barnum</p>
+    <p id="intro">This project was conducted using data provided by Dr. Mariana Abarca at Smith College through her moth monitoring project, referred to as "Mothitor,"
+    conducted at Smith College's Macleish Field Station. The primary research question being investigated through Mothitor is as follows:
+    does landing surface size affect moth diversity estimates? As a team, we built to interactable plots where we utilize variable
+    such as biomass, species richness, abundance, number of moths observed, species, date, and landing size.
+    that address this question.</p>
     <div id="tooltip" style="
         position: absolute;
         opacity: 0;
@@ -24,8 +28,12 @@
         font-size: 12px;">
     </div>
     <h2>Bar Chart</h2>
+    <p> Use the following bar chart to learn more about species richness, biomass, or abundance by landing size. The drop down menu below allows you to change the
+    y-axis variable. If you hover over any of the bars it will give you a data breakdown consisting of metric, station, and
+    value. Please note that the data shows a positive skew for the mean across all three variables. Though they vary in how
+    extreme by variable.</p>
     <div id="bar_label">
-        <label for="xSelect">X-axis:</label>
+        <label for="xSelect">y-axis:</label>
         <select name="x-axis" id="xSelect">
             <option value="biomass">Biomass</option>
             <option value="speciesRichness">Species Richness</option>
@@ -36,9 +44,12 @@
         <div id="bar_chart">
 
     </div>
-    <h2>Scatterplot</h2>
     <div id = "legend">
     </div>
+    <h2>Scatterplot</h2>
+    <p> Use the following scatter plot to learn more about the relationship between number of moths, time of year, and landing size.
+    Additionally, each data point is interactable! Click on a point to see a pop out of a pie chart breakdown of the number
+    of moths by species on that date.</p>
     <div id="vis2">
         <div id="scatterplot_container">
             <svg id="scatterplot" width="960" height="660">
