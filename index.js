@@ -1,6 +1,7 @@
-const data = await d3.csv('mothitor.csv');
+let data = await d3.csv('mothitor.csv');
 const tooltip = d3.select("#tooltip");
-console.log(data);
+// exclude any observations that are not moths
+data = data.filter(e => e.determination_id !== "11613");
 
 /// dimensions
 let margin = 50;
