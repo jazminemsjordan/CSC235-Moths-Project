@@ -5,12 +5,12 @@
 - Krystal Bautista
 - Emma McRedmond
 - Lorelei Barnum
+
 ## Contact
-If there are any questions about our graphs, data, or website, you can reach out to any of:
+If there are any questions about our graphs, data, or website, you can reach out to any one of the following:
 - Jazmine Jordan at jmjordan@smith.edu
 - Krystal Bautista at hbautista@smith.edu
 - Lorelei Barnum at loreleibarnum@outlook.com
-
 
 ## Overview of Project
 This project was conducted using data provided by Dr. Mariana Abarca at Smith College through her moth monitoring project
