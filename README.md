@@ -14,23 +14,19 @@ If there are any questions about our graphs, data, or website, you can reach out
 
 ## Overview of Project
 This project was conducted using data provided by Dr. Mariana Abarca at Smith College through her moth monitoring project
-at Macleish referred to as Mothitor. The project investigates the question, does landing surface size affect moth diversity estimates?
-To assist with Dr. Abarca's research question, we built a website that contains two plots, a bar graph and scatterplot,
-with the data provided. Both of these plots are interactable. The bar chart allows you to change the y-axis variable
+at Macleish, referred to as Mothitor. The project investigates whether landing surface size affects moth diversity estimates.
+To assist with Dr. Abarca's research question, we built a website that contains two plots, a bar graph and a scatterplot,
+with the data provided. Both of these plots are interactive. The bar chart allows you to change the y-axis variable
 by biomass, species richness, and abundance. The scatter plot allows the user to click a point that expands it out to a pie chart
 breakdown of the moth species by date.
 
 ## How to View Website
-To view the website, the user can host their own local service on their machine by downloading the github zip of all the files. To do this the user first must ensure they have
-the node.js package installed. If they do not, they can install it from the node.js [website](https://nodejs.org/en/download/).
-The user must open their terminal and can put in the following command: "npm install -g http-server" to download the http-server
-package that will allow the user to open a static HTTP server. Next, the user should put the following into the terminal
-to open website: "npx http-server /path -o -p 8080". This should open up a local server with the website!
+To view the website, the user can host a local service on their machine by downloading the GitHub zip file containing all the files. To do this, the user first must go to the drop-down selection titled "Code" on this repository and click the option "download ZIP." Additionally, the user must also have the Node.js package installed. If they do not, they can install it from the Node.js [website](https://nodejs.org/en/download/). The user must open their terminal and can put in the following command: "npm install -g http-server" to download the http-server package that will allow the user to open a static HTTP server. Next, the user should put the following into the terminal to open the website: "npx http-server /path -o -p 8080". This should open up a local server containing a website. If a user attempts to open by opening the index.html files directly, the website will not correctly display the graphs we have built.
 
 *This website is not phone friendly*
 
 ## Guide to mothitor.csv
-The mothitor.csv file is the data-wrangled version of the original JSON file given to us by Dr. Abarca. It was a large, complicated file (291 pages and 69.5MB!) with several layers of nested arrays and lots of redundant information. Using the python Pandas library for data processing, we simplified the JSON into a CSV file with 18 columns. Each row represents one observed moth.
+The mothitor.csv file is the data-wrangled version of the original JSON file given to us by Dr. Abarca. It was a large, complicated file (291 pages and 69.5MB!) with several layers of nested arrays and lots of redundant information. Using the Python Pandas library for data processing, we simplified the JSON into a CSV file with 18 columns. Each row represents one observed moth.
 
 | Variable Name | Stored Value | Notes |
 | ------- | --------- | --------- |
