@@ -72,9 +72,16 @@ var svg = d3.select("#bar_chart")
                     .append("g")
                         .attr("transform", `translate(${margin},${margin})`); 
 
+//Bar chart title
+svg.append("text")
+  .attr("id", "bar_chart_title")
+  .attr("x", width / 2)
+  .attr("y", -20)
+  .attr("text-anchor", "middle")
+  .style("font-size", "15px")
+  .text("The Impact of Landing Surface Area on Moths");
 
-
-  // calculate biomass per row usng bbox which is an approximation
+// calculate biomass per row usng bbox which is an approximation
   data.forEach(d => {
     d.bbox_parsed = JSON.parse(d.bbox);
 
@@ -90,6 +97,7 @@ var svg = d3.select("#bar_chart")
     d => d.deployment_name,
     d => d.date
    );
+
 
 
 // calculate species richness per mothitor per day to be able to calculate the mean and median.
@@ -168,12 +176,31 @@ function getSummary() {
       .attr("transform", "rotate(-30)")
       .style("text-anchor", "end");
 
+  //x axis label
+  svg.append("text")
+    .attr("id", "bar_x_label")
+    .attr("x", width / 2)
+    .attr("y", height + 50)
+    .attr("text-anchor", "middle")
+    .style("font-size", "15px")
+    .text("Landing Station");
+
   // Y scale
   const barY = d3.scaleLinear()
     .range([height, 0]);
 
   svg.append("g")
     .attr("class", "y-axis");
+
+  //y axis label
+  const yLabel = svg.append("text")
+    .attr("id", "bar_y_label")
+    .attr("transform", "rotate(-90)")
+    .attr("x", -height / 2)
+    .attr("y", -40)
+    .attr("text-anchor", "middle")
+    .style("font-size", "15px")
+    .text("Area of a Moth (sq. cm)");
 
   // subgroup scale (within each deployment)
   const xSubgroup = d3.scaleBand()
@@ -188,6 +215,14 @@ function getSummary() {
 
   function update() {
     const summary = getSummary();
+
+    //update y axis label
+    const yTitles = {
+      "biomass": "Area of a Moth (sq. cm)",
+      "abundance": "Number of Moths",
+      "speciesRichness": "Number of Species"
+    };
+    d3.select("#bar_y_label").text(yTitles[xVar]);
 
     xSubgroup.domain(subgroups);
 
