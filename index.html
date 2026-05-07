@@ -1,23 +1,22 @@
 <!DOCTYPE html>
 <html>
 <head>
-
     <link rel="stylesheet" href="style.css">
     <title>CSC235 Moths Project</title>
     <script src="d3.v7.min.js"></script>
     <link rel="icon" href="data:,">
-
-
 </head>
 
 <body>
-    <h1>CSC235 Moths Project</h1>
-    <p id="authors">Jazmine Jordan, Krystal Bautista, Scarlett Lopez, Emma McRedmond, and Lorelei Barnum</p>
-    <p id="intro">This project was conducted using data provided by Dr. Mariana Abarca at Smith College through her moth monitoring project, referred to as "Mothitor,"
-    conducted at Smith College's Macleish Field Station. The primary research question being investigated through Mothitor is as follows:
-    does landing surface size affect moth diversity estimates? As a team, we built to interactable plots where we utilize variable
-    such as biomass, species richness, abundance, number of moths observed, species, date, and landing size.
-    that address this question.</p>
+    <h1> CSC235 Moths Project </h1>
+    <p id="authors">Jazmine Jordan, Krystal Bautista, Scarlett Lopez, Emma McRedmond, and Lorelei Barnum </p>
+    <p id="intro"> This project used data provided by Dr. Mariana Abarca at Smith College through her moth monitoring project
+    conducted at Smith College's Macleish Field Station, referred to as "Mothitor," to help in the project's research efforts to
+    address the following research question: Does landing surface size affect moth diversity estimates? As a team, we built
+    three interactive plots that address this question by utilizing variables such as biomass, species richness, abundance,
+    number of moths observed, species, date, and landing size. These graphs visualize in particular the relationship
+    between landing size and biomas/species richness/abundance, the relationship between date, number of moths, and
+    landing size, and the relationship between date and species. </p>
     <div id="tooltip" style="
         position: absolute;
         opacity: 0;
@@ -27,11 +26,11 @@
         pointer-events: none;
         font-size: 12px;">
     </div>
-    <h2>Bar Chart</h2>
-    <p> Use the following bar chart to learn more about species richness, biomass, or abundance by landing size. The drop down menu below allows you to change the
-    y-axis variable. If you hover over any of the bars it will give you a data breakdown consisting of metric, station, and
-    value. Please note that the data shows a positive skew for the mean across all three variables. Though they vary in how
-    extreme by variable.</p>
+    <h2> Bar Chart </h2>
+    <p> Use the following bar chart to learn more about species richness, biomass, or abundance by landing size. The drop down
+    menu below allows you to change the y-axis variable. Additionally, if you hover over any of the bars it will give you a
+    data breakdown consisting of the metric, station, and value. Please note that the data shows a positive skew for the mean
+    across all three variables. Though the skew varies in strength by variable. </p>
     <div id="bar_label">
         <label for="xSelect">y-axis:</label>
         <select name="x-axis" id="xSelect">
@@ -41,16 +40,15 @@
         </select>
     </div>
 
-        <div id="bar_chart">
-
+    <div id="bar_chart">
     </div>
     <div id = "legend">
     </div>
-    <h2>Scatterplot</h2>
+    <h2> Scatterplot </h2>
     <p> Use the following scatter plot to learn more about the relationship between number of moths, time of year, and landing size.
-    Additionally, each data point is interactable! Click on a point to see a pop out of a pie chart breakdown of the number
+    Additionally, each data point is interactive! Click on a point to see a pop out of a pie chart breakdown of the number
     of moths by species on that date. Notably, there is a lack of data for the month of August. This is because the research
-    project is not ran during August and should not be attributed to moth behavior.</p>
+    project is not ran during August and should not be attributed to moth behavior. </p>
     <div id="vis2">
         <div id="scatterplot_container">
             <svg id="scatterplot" width="960" height="660">
@@ -62,11 +60,12 @@
         </div>
         <div id="piechart_container">
             <svg id="pie_chart" height="300" width="300">
-                <g id="arcs" transform="translate(150, 150)"></g>
-                <p id="pie_title"></p>
+                <g id="arcs" transform="translate(150, 150)"> </g>
+                <p id="pie_title"> </p>
             </svg>
         </div>
     </div>
-<script src="index.js" type="module"></script>
+<script src="index.js" type="module"> </script>
 </body>
+
 </html>

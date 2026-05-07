@@ -319,6 +319,19 @@ d3.select('#xaxis')
     .style("font-size", "15px")
     .text("Date");
 
+// x axis title
+d3.select('#xaxis')
+    .call(xaxis)
+    .attr("transform", "translate(0, 600)")
+    .append("text")
+    //(940-80)/2 + 4
+    .attr("x", (940 - 80) / 2+90)
+    .attr("y", -580)
+    .attr("fill", "black")
+    .attr("text-anchor", "middle")
+    .style("font-size", "15px")
+    .text("Number of Moths Observed by Date in 2025");
+
 
 // y axis
 const y = d3.scaleLinear()
