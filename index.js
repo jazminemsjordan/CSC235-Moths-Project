@@ -68,7 +68,7 @@ const unitMap = {
 var svg = d3.select("#bar_chart")
   .append("svg")
     .attr("width", (width + margin*2))
-                    .attr("height", (height + margin*2))
+                    .attr("height", (height + margin*2.1))
                     .append("g")
                         .attr("transform", `translate(${margin},${margin})`); 
 
@@ -197,7 +197,7 @@ function getSummary() {
     .attr("id", "bar_y_label")
     .attr("transform", "rotate(-90)")
     .attr("x", -height / 2)
-    .attr("y", -40)
+    .attr("y", -35)
     .attr("text-anchor", "middle")
     .style("font-size", "15px")
     .text("Area of a Moth (sq. cm)");
