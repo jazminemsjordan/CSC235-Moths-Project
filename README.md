@@ -14,7 +14,7 @@ If there are any questions about our graphs, data, or website, you can reach out
 
 ## Overview of Project
 This project was conducted using data provided by Dr. Mariana Abarca at Smith College through her moth monitoring project
-at Macleish, referred to as Mothitor. The project investigates whether landing surface size affects moth diversity estimates.
+at MacLeish Field Station, referred to as Mothitor. The project investigates whether landing surface size affects moth diversity estimates.
 To assist with Dr. Abarca's research, we built a website that contains two main plots: a bar graph and a scatter plot. Both of these plots are interactive. The bar chart allows you to change the y-axis variable by biomass, species richness, and abundance. The scatter plot allows the user to click a point that expands it out to a pie chart breakdown of moth species by date.
 
 ## How to View Website
